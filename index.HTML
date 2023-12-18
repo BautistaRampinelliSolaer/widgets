@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:widget="http://www.netvibes.com/ns/">
+
+  <head>
+
+    <!-- Application Title -->
+    <title>Latest blog post</title>
+
+    <!-- Application Metas -->
+    <meta name="author" content="John Doe" />
+    <meta name="email" content="john.doe@example.com" />
+    <meta name="website" content="http://example.com" />
+    <meta name="description" content="Displays latest post from a feed" />
+    <meta name="version" content="1.0" />
+    <meta name="apiVersion" content="1.3" />
+    <meta name="debugMode" content="false" />
+    <meta name="strictMode" content="false" />
+
+    <!-- Application thumbnail and screenshot -->
+    <meta name="thumbnail" content="http://www.example.com/app-logo.png" />
+    <meta name="screenshot" content="http://www.example.com/app-full.png" />
+
+    <!-- Application Icons -->
+    <link rel="icon" type="image/x-icon" href="http://www.example.com/app/favicon.ico" />
+    <link rel="icon" type="image/png" href="http://www.example.com/app/favicon.png" />
+    <link rel="rich-icon" type="image/png" href="http://www.example.com/app/richicon.png" />
+
+    <!-- Application Standalone emulation files -->
+    <link rel="stylesheet" type="text/css" href="//cdn.uwa.netvibes.com/lib/c/UWA/assets/css/standalone.css"/>
+    <script type="text/javascript" src="//uwa.netvibes.com/lib/c/UWA/js/UWA_Standalone_Alone.js"></script>
+
+    <!-- Application Preferences -->
+    <widget:preferences>
+        <widget:preference type="text" name="feedUrl" label="RSS/Atom feed to use" defaultValue="https://blog.netvibes.com/rss.php"></widget:preference>
+    </widget:preferences>
+
+    <!-- Application JavaScript Source -->
+    <script type="text/javascript">
+    //<![CDATA[
+
+      var DisplayLatestBlogPost = {
+
+          load: function () {
+              UWA.Data.getFeed(widget.getValue('feedUrl'), DisplayLatestBlogPost.display);
+          },
+
+          /*
+              Method: display
+
+                Handle response from UWA.Data.getFeed in order to display
+                first feed item from preference feedUrl
+          */
+          display: function(feed) {
+
+              var latestPost = feed.items[0];
+
+              // Set Application title
+              widget.setTitle('<a href="' + feed.link + '">' + feed.title + '</a>');
+              widget.setIcon(feed.link, true);
+
+              // Set Application content
+
+              // Syntax using UWA JS Runtime 1.3+ version
+              widget.body.setContent([
+                  {
+                      tag: 'h2',
+                      html: {
+                          tag: 'a',
+                          href: latestPost.link,
+                          html: latestPost.title
+                      }
+                  },
+                  {
+                      tag: 'p',
+                      text: 'Posted on ' + latestPost.date
+                  },
+                  {
+                      tag: 'div',
+                      html: latestPost.content
+                  },
+                  {
+                      tag: 'p',
+                      html: [
+                          'Read all the previous posts by ',
+                          {
+                              tag: 'a',
+                              href: feed.link,
+                              text: 'visiting the blog'
+                          },
+                          '!'
+                      ]
+                  }
+              ]);
+
+              // Syntax using UWA JS Runtime 1.2 version
+              /*
+              var contentHtml = '';
+              contentHtml += '<h2><a href="' + latestPost.link + '">' + latestPost.title + '</a></h2>';
+              contentHtml += '<p>Posted on ' + latestPost.date + '<p/>';
+              contentHtml += latestPost.content;
+              contentHtml += '<em>Read all the previous posts by <a href="' + feed.htmlUrl + '">visiting the blog</a>!</em>'
+              widget.setBody(contentHtml);
+              */
+          }
+      };
+
+      // Syntax using UWA JS Runtime 1.3+ version
+
+      // Simple event setter
+      /* widget.addEvent('onLoad', DisplayLatestBlogPost.load); */
+
+      // Or using multiple events setter
+      widget.addEvents({
+          onLoad: DisplayLatestBlogPost.load,
+          onRefresh: DisplayLatestBlogPost.load
+      });
+
+      // Syntax using UWA JS Runtime 1.2 version
+      /* widget.onLoad = DisplayLatestBlogPost.load; */
+
+    //]]>
+    </script>
+  </head>
+  <body>
+    <!-- Application XHTML Source -->
+    <p>El código está almacenado en github, servirá?</p>
+  </body>
+</html>
